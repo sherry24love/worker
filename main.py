@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import * from tkinter
+from tkinter import *
+from utils.ua import ua
 
 
 class gun:
@@ -22,4 +23,7 @@ class gun:
 
 
 if __name__ == "__main__":
-    gui = gun()
+    #gui = gun()
+    u = ua()
+    ua = u.get_wechat_ua()
+    print(ua)
