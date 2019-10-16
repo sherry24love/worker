@@ -17,7 +17,6 @@ class ua:
 
     def __init__(self):
         self.current_dir = os.path.dirname(__file__)
-        print(self.current_dir)
         wechat_ua_file = os.path.join(self.current_dir, "wechat_ua.conf")
         fo = open(wechat_ua_file, 'r')
         for line in fo.readlines():  # 依次读取每行
