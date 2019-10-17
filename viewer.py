@@ -11,10 +11,22 @@ from utils.vpn import vpn
 from utils.ua import ua as user_agent
 from utils.links import links
 import random
+import configparser
+import json
 
 time = 0
 debug = True
-v = vpn(debug)
+
+# 获取配置文件
+cf = configparser.ConfigParser()
+path = os.getcwd()
+config_file = os.path.join(path, 'data', 'config.ini')
+cf.read(config_file)
+conf_sections = cf.sections()
+url = cf.get('vpn', 'url')
+
+# 初始化VPN
+v = vpn(url, debug)
 user_agent_object = user_agent()
 link_object = links(debug)
 
@@ -23,11 +35,6 @@ while True:
     print("current directory is {}".format(os.getcwd()))
     time = time+1
     # os.system(command)
-    # 60.17.252.34:4225
-    # 115.213.189.105
-    ip = '58.218.200.248:6507'
-    if debug is False:
-        ip = v.getIp()
 
     """ 获取可以用的APP信息 """
 
@@ -43,6 +50,10 @@ while True:
     chorme_options.add_argument("user-agent={}".format(ua))
 
     if debug is False:
+        ip = v.getIp()
+        if ip is False:
+            print("本次IP获取失败")
+            break
         proxy = 'socks5://{}'.format(ip)
         chorme_options.add_argument("--proxy-server={}".format(proxy))
 
@@ -50,10 +61,12 @@ while True:
     brower = webdriver.Chrome(options=chorme_options)
 
     apps = link_object.get_apps()
-    brower.get('http://ip-api.com/json')
-    brower.implicitly_wait(3)
     try:
+        brower.get('http://ip-api.com/json')
+        brower.implicitly_wait(30)
         body = brower.find_element_by_xpath("/html/body/pre")
+        print(body.text)
+        print(json.JSONDecoder().decode(body.text))
     except NoSuchElementException:
         print("IP信号不好切下一组IP")
         continue
@@ -65,20 +78,27 @@ while True:
         brower.execute_script("window.open('','_blank');")
         brower.switch_to.window(brower.window_handles[-1])
         url = link_object.get_links(0)
-        print("正在为您打开链接{}".format(url))
-        brower.get(url)
-        brower.implicitly_wait(10)
+        try:
+            print("正在为您打开链接{}".format(url))
+            brower.get(url)
+            brower.implicitly_wait(30)
+        except:
+            print("打开页面长时间无响应")
+            continue
         try:
             print("执行界面的滑动")
+            js = "document.querySelector('#expandContent').click();setTimeout(()=>{window.scrollTo(0,10000)},1500)"
+            brower.execute_script(js)
+            sleep(random.randint(2, 5))
             js = "document.querySelector('.spread').click();setTimeout(()=>{window.scrollTo(0,10000)},1500)"
             brower.execute_script(js)
         except:
             pass
         print("在当前页面停留5到20秒")
-        sleep(random.randint(5, 30))
+        sleep(random.randint(15, 30))
 
     print("补时停留")
-    sleep(random.randint(5, 20))
+    sleep(random.randint(15, 30))
 
     brower.close()
     print("关闭浏览器")
