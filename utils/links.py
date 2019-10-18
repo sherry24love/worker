@@ -20,6 +20,10 @@ class links:
             {
                 "name": "百家姓",
                 "code": "bjx"
+            },
+            {
+                "name":"土拨鼠",
+                "code":"tbs"
             }
         ]
         self.current_dir = os.getcwd()

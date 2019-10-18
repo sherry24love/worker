@@ -15,7 +15,7 @@ import configparser
 import json
 
 time = 0
-debug = True
+debug = False
 
 # 获取配置文件
 cf = configparser.ConfigParser()
@@ -56,10 +56,10 @@ while True:
             break
         proxy = 'socks5://{}'.format(ip)
         chorme_options.add_argument("--proxy-server={}".format(proxy))
-
+    exit
     # 设置浏览器参数
     brower = webdriver.Chrome(options=chorme_options)
-
+    brower.set_window_size(300, 200)
     apps = link_object.get_apps()
     try:
         brower.get('http://ip-api.com/json')
@@ -67,6 +67,7 @@ while True:
         body = brower.find_element_by_xpath("/html/body/pre")
         print(body.text)
         print(json.JSONDecoder().decode(body.text))
+
     except NoSuchElementException:
         print("IP信号不好切下一组IP")
         continue
