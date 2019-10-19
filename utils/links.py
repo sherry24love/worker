@@ -18,12 +18,12 @@ class links:
         """ 获取APP信息 """
         apps = [
             {
-                "name": "百家姓",
-                "code": "bjx"
+                "name": "土拨鼠",
+                "code": "tbs"
             },
             {
-                "name":"土拨鼠",
-                "code":"tbs"
+                "name": "百家姓",
+                "code": "bjx"
             }
         ]
         self.current_dir = os.getcwd()

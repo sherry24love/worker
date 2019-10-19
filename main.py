@@ -2,7 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from tkinter import *
-from utils.ua import ua
+from utils.vpn import vpn
+from utils.ua import ua as user_agent
+from utils.links import links
+import configparser
+import json
+import os
+from view import view
 
 
 class gun:
@@ -22,8 +28,19 @@ class gun:
     pass
 
 
-if __name__ == "__main__":
-    #gui = gun()
-    u = ua()
-    ua = u.get_wechat_ua()
-    print(ua)
+debug = True
+#gui = gun()
+# 获取配置文件
+cf = configparser.ConfigParser()
+path = os.getcwd()
+config_file = os.path.join(path, 'data', 'config.ini')
+cf.read(config_file)
+conf_sections = cf.sections()
+url = cf.get('vpn', 'url')
+
+# 初始化VPN
+v = vpn(url, debug)
+user_agent_object = user_agent()
+link_object = links(debug)
+view = view(user_agent_object, link_object, v)
+view.run(1)
